@@ -12,16 +12,13 @@ export default class MyPromise {
 
         this.resolve = (value: any) => {
             if (this.status === 'pending') {
-                console.log('resolve: ', value);
                 this.status = 'resolved';
-                // throw new Error('test resolve error');
                 this.resolveExecutorValue = value;
             }
         };
 
         this.reject = (value: any) => {
             if (this.status === 'pending') {
-                console.log('reject: ', value);
                 this.status = 'rejected';
                 this.rejectExecutorValue = value;
             }
@@ -36,15 +33,17 @@ export default class MyPromise {
     }
 
     then(resolveInThen: ResolveType, rejectInThen: RejectType) {
-        if (this.status === 'resolved') {
-            console.log('resolveInThen: ');
-            resolveInThen(this.resolveExecutorValue);
-        }
+        return new MyPromise((resolve, reject) => {
+            if (this.status === 'resolved') {
+                let result = resolveInThen(this.resolveExecutorValue);
+                resolve(result);
+            }
 
-        if (this.status === 'rejected') {
-            console.log('rejectInThen: ');
-            rejectInThen(this.rejectExecutorValue);
-        }
+            if (this.status === 'rejected') {
+                let result = rejectInThen(this.rejectExecutorValue);
+                reject(result);
+            }
+        });
     }
 }
 
