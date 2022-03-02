@@ -11,15 +11,19 @@ export default class MyPromise {
         this.status = 'pending';
 
         this.resolve = (value: any) => {
-            console.log('resolve: ', value);
-            this.status = 'resolved';
-            this.resolveExecutorValue = value;
+            if (this.status === 'pending') {
+                console.log('resolve: ', value);
+                this.status = 'resolved';
+                this.resolveExecutorValue = value;
+            }
         };
 
         this.reject = (value: any) => {
-            console.log('reject: ', value);
-            this.status = 'rejected';
-            this.rejectExecutorValue = value;
+            if (this.status === 'pending') {
+                console.log('reject: ', value);
+                this.status = 'rejected';
+                this.rejectExecutorValue = value;
+            }
         };
 
         executor(this.resolve, this.reject);
