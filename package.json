@@ -1,6 +1,9 @@
 {
-	"devDependencies": {
-		"typescript": "^4.6.2",
-		"ts-node": "^10.6.0"
-	}
+    "devDependencies": {
+        "typescript": "^4.6.2",
+        "ts-node": "^10.6.0"
+    },
+    "scripts": {
+        "test": "ts-node src/test.ts"
+    }
 }
