@@ -14,6 +14,7 @@ export default class MyPromise {
             if (this.status === 'pending') {
                 console.log('resolve: ', value);
                 this.status = 'resolved';
+                // throw new Error('test resolve error');
                 this.resolveExecutorValue = value;
             }
         };
@@ -26,7 +27,12 @@ export default class MyPromise {
             }
         };
 
-        executor(this.resolve, this.reject);
+        try {
+            executor(this.resolve, this.reject);
+        } catch (error: any) {
+            this.status = 'pending';
+            this.reject(error.toString());
+        }
     }
 
     then(resolveInThen: ResolveType, rejectInThen: RejectType) {
