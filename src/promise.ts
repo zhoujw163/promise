@@ -51,22 +51,38 @@ export default class MyPromise {
 
             // 处理异步
             if (this.status === 'pending') {
-                this.resolveThenCallbacks.push(() => {
-                    let result = resolveInThen(this.resolveExecutorValue);
-                    if (isPromise(result)) {
-                        setTimeout(() => {
-                            resolve(result.resolveExecutorValue);
-                        }, 5);
-                    } else {
-                        resolve(result);
-                    }
-                });
-
-                this.rejectThenCallbacks.push(() => {
-                    let result = resolveInThen(this.rejectExecutorValue);
-                    reject(result);
-                });
+                this.processManyAsyncAndSync(resolveInThen, rejectInThen, resolve, reject);
             }
+        });
+    }
+
+    /**
+     * @description 处理多个异步 + 级联then
+     * @param resolveInThen
+     * @param rejectInThen
+     * @param resolve
+     * @param reject
+     */
+    processManyAsyncAndSync(
+        resolveInThen: ResolveType,
+        rejectInThen: RejectType,
+        resolve: ResolveType,
+        reject: RejectType
+    ): void {
+        this.resolveThenCallbacks.push(() => {
+            let result = resolveInThen(this.resolveExecutorValue);
+            if (isPromise(result)) {
+                setTimeout(() => {
+                    resolve(result.resolveExecutorValue);
+                }, 5);
+            } else {
+                resolve(result);
+            }
+        });
+
+        this.rejectThenCallbacks.push(() => {
+            let result = resolveInThen(this.rejectExecutorValue);
+            reject(result);
         });
     }
 }
