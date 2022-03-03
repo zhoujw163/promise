@@ -1,7 +1,9 @@
 import MyPromise from './promise';
 
 let p = new MyPromise((resolve, reject) => {
-    resolve(1);
+    setTimeout(() => {
+        resolve(1);
+    }, 0);
     // reject(2);
 });
 
@@ -35,3 +37,5 @@ p.then(
             return 'fail';
         }
     );
+
+console.log('end');

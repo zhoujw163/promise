@@ -6,6 +6,8 @@ export default class MyPromise {
     public reject!: RejectType;
     public resolveExecutorValue!: any;
     public rejectExecutorValue!: any;
+    public resolveThenCallbacks: Array<() => void> = [];
+    public rejectThenCallbacks: Array<() => void> = [];
 
     constructor(executor: Executor) {
         this.status = 'pending';
@@ -14,6 +16,7 @@ export default class MyPromise {
             if (this.status === 'pending') {
                 this.status = 'resolved';
                 this.resolveExecutorValue = value;
+                this.resolveThenCallbacks.forEach(callback => callback());
             }
         };
 
@@ -42,6 +45,19 @@ export default class MyPromise {
             if (this.status === 'rejected') {
                 let result = rejectInThen(this.rejectExecutorValue);
                 reject(result);
+            }
+
+            // 处理异步
+            if (this.status === 'pending') {
+                this.resolveThenCallbacks.push(() => {
+                    let result = resolveInThen(this.resolveExecutorValue);
+                    resolve(result);
+                });
+
+                this.rejectThenCallbacks.push(() => {
+                    let result = resolveInThen(this.rejectExecutorValue);
+                    reject(result);
+                });
             }
         });
     }
