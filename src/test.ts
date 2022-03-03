@@ -3,38 +3,42 @@ import MyPromise from './promise';
 let p = new MyPromise((resolve, reject) => {
     setTimeout(() => {
         resolve(1);
-    }, 0);
+    }, 5);
     // reject(2);
 });
 
 p.then(
     res => {
         console.log('第一个then: ', res);
-        return 'ok';
+        return new MyPromise((resolve, reject) => {
+            setTimeout(() => {
+                resolve('第二个异步-ok1');
+            }, 5);
+        });
     },
     err => {
         console.log('第一个then: ', err);
-        return 'fail';
+        return 'fail1';
     }
 )
     .then(
         res => {
             console.log('第二个then: ', res);
-            return 'ok';
+            return 'ok2';
         },
         err => {
             console.log('第二个then: ', err);
-            return 'fail';
+            return 'fail2';
         }
     )
     .then(
         res => {
             console.log('第三个then: ', res);
-            return 'ok';
+            return 'ok3';
         },
         err => {
             console.log('第三个then: ', err);
-            return 'fail';
+            return 'fail3';
         }
     );
 

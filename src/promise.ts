@@ -1,4 +1,5 @@
 import { Status, RejectType, ResolveType, Executor } from './actionType';
+import { isPromise } from './utils';
 
 export default class MyPromise {
     public status!: Status;
@@ -13,6 +14,7 @@ export default class MyPromise {
         this.status = 'pending';
 
         this.resolve = (value: any) => {
+            console.log('进入了resolve');
             if (this.status === 'pending') {
                 this.status = 'resolved';
                 this.resolveExecutorValue = value;
@@ -51,7 +53,13 @@ export default class MyPromise {
             if (this.status === 'pending') {
                 this.resolveThenCallbacks.push(() => {
                     let result = resolveInThen(this.resolveExecutorValue);
-                    resolve(result);
+                    if (isPromise(result)) {
+                        setTimeout(() => {
+                            resolve(result.resolveExecutorValue);
+                        }, 5);
+                    } else {
+                        resolve(result);
+                    }
                 });
 
                 this.rejectThenCallbacks.push(() => {
