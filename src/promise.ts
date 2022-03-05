@@ -14,7 +14,6 @@ export default class MyPromise {
         this.status = 'pending';
 
         this.resolve = (value: any) => {
-            console.log('进入了resolve');
             if (this.status === 'pending') {
                 this.status = 'resolved';
                 this.resolveExecutorValue = value;
@@ -86,8 +85,30 @@ export default class MyPromise {
         });
 
         this.rejectThenCallbacks.push(() => {
-            let result = resolveInThen(this.rejectExecutorValue);
+            let result = rejectInThen(this.rejectExecutorValue);
             reject(result);
+        });
+    }
+
+    static all(promises: MyPromise[]): MyPromise {
+        return new MyPromise((resolve, reject) => {
+            let results: any[] = [];
+            promises.forEach((p, i) => {
+                p.then(
+                    successValue => {
+                        ProcessData(successValue, i);
+                    },
+                    failValue => {
+                        reject(failValue);
+                    }
+                );
+            });
+            function ProcessData(data: any, i: number) {
+                results[i] = data;
+                if (i === promises.length - 1) {
+                    resolve(results);
+                }
+            }
         });
     }
 }

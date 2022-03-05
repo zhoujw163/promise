@@ -4,6 +4,6 @@
         "ts-node": "^10.6.0"
     },
     "scripts": {
-        "test": "ts-node src/test.ts"
+        "test": "ts-node src/test-all.ts"
     }
 }
