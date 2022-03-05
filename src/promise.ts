@@ -72,9 +72,13 @@ export default class MyPromise {
         this.resolveThenCallbacks.push(() => {
             let result = resolveInThen(this.resolveExecutorValue);
             if (isPromise(result)) {
-                setTimeout(() => {
-                    resolve(result.resolveExecutorValue);
-                }, 5);
+                // 处理外部调用 then函数的异步
+                result.then(
+                    resolveSuccess => {
+                        resolve(resolveSuccess);
+                    },
+                    rejectSuccess => {}
+                );
             } else {
                 resolve(result);
             }
