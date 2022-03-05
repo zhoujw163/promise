@@ -93,22 +93,50 @@ export default class MyPromise {
     static all(promises: MyPromise[]): MyPromise {
         return new MyPromise((resolve, reject) => {
             let results: any[] = [];
-            promises.forEach((p, i) => {
-                p.then(
+            for (let i = 0; i < promises.length; i++) {
+                promises[i].then(
                     successValue => {
                         ProcessData(successValue, i);
                     },
                     failValue => {
                         reject(failValue);
+                        return;
                     }
                 );
-            });
+            }
             function ProcessData(data: any, i: number) {
                 results[i] = data;
                 if (i === promises.length - 1) {
                     resolve(results);
                 }
             }
+        });
+    }
+
+    static race(promises: MyPromise[]) {
+        return new MyPromise((resolve, reject) => {
+            promises.forEach(promise => {
+                promise.then(
+                    successValue => resolve(successValue),
+                    failValue => reject(failValue)
+                );
+            });
+        });
+    }
+
+    static resolve(value: any): MyPromise {
+        if (isPromise(value)) {
+            return value;
+        } else {
+            return new MyPromise((resolve, reject) => {
+                resolve(value);
+            });
+        }
+    }
+
+    static reject(value: any): MyPromise {
+        return new MyPromise((resolve, reject) => {
+            reject(value);
         });
     }
 }
