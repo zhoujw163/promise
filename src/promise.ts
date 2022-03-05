@@ -26,6 +26,7 @@ export default class MyPromise {
             if (this.status === 'pending') {
                 this.status = 'rejected';
                 this.rejectExecutorValue = value;
+                this.rejectThenCallbacks.forEach(callback => callback());
             }
         };
 
